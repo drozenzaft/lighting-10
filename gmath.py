@@ -13,23 +13,34 @@ def get_lighting(normal, view, ambient, light, areflect, dreflect, sreflect ):
     pass
 
 def calculate_ambient(alight, areflect):
-    pass
+    ans = [0,0,0]
+    for x in range(3):
+        ans[x] = alight[x]*areflect[x]
+    return x
 
 def calculate_diffuse(light, dreflect, normal):
-    pass
+    ans = [0,0,0]
+    p = light[1]
+    l = normalize(light[0])
+    n = normalize(normal)
+    for x in range(3):
+        ans[x] = p[x]*dreflect[x]*dot_product(l,n)
+    return ans
 
 def calculate_specular(light, sreflect, view, normal):
     pass
 
 def limit_color(color):
-    pass
+    color = 0 if color < 0 else if color > 255 color = 255
 
 #vector functions
 def normalize(vector):
-    pass
+    mag = (math.sqrt(vector[0]+vector[1]+vector[2]))**-1
+    for x in vector:
+        x *= mag
 
 def dot_product(a, b):
-    pass
+    return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]
 
 def calculate_normal(polygons, i):
 
