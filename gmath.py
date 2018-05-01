@@ -6,39 +6,70 @@ DIFFUSE = 1
 SPECULAR = 2
 LOCATION = 0
 COLOR = 1
-SPECULAR_EXP = 4
+SPECULAR_EXP = 16
 
 #lighting functions
 def get_lighting(normal, view, ambient, light, areflect, dreflect, sreflect ):
-    pass
+    #ans = add_colors(calculate_ambient(ambient,areflect),calculate_diffuse(
+     #   light,dreflect,normal),calculate_specular(light,sreflect,view,normal))
+    ans = calculate_ambient(ambient,areflect)
+    for x in range(3):
+        ans[x] = limit_color(ans[x])
+    print ans
+    return ans
 
 def calculate_ambient(alight, areflect):
     ans = [0,0,0]
     for x in range(3):
         ans[x] = alight[x]*areflect[x]
-    return x
+        ans[x] = limit_color(ans[x])
+    return ans
 
 def calculate_diffuse(light, dreflect, normal):
     ans = [0,0,0]
     p = light[1]
-    l = normalize(light[0])
-    n = normalize(normal)
+    l = light[0]
+    n = normal
+    normalize(l)
+    normalize(n)
     for x in range(3):
         ans[x] = p[x]*dreflect[x]*dot_product(l,n)
+        ans[x] = limit_color(ans[x])
     return ans
 
 def calculate_specular(light, sreflect, view, normal):
-    pass
-
+    ans = [0,0,0]
+    p = light[1]
+    l = light[0]
+    v = view
+    n = normal
+    normalize(n)
+    normalize(v)
+    normalize(l)
+    for x in range(3):
+        ans[x] = p[x]*sreflect[x]*((2*dot_product(n,l)*n[x]-l[x])-v[x])**SPECULAR_EXP
+        ans[x] = limit_color(ans[x])
+    return ans
+    
 def limit_color(color):
-    color = 0 if color < 0 else if color > 255 color = 255
-
+    if color < 0:
+        color = 0
+    if color > 255:
+        color = 255
+    return color
+            
+def add_colors(a,b,c):
+    ans = [a[0]+b[0]+c[0],a[1]+b[1]+c[1],a[2]+b[2]+c[2]]
+    for x in range(3):
+        ans[x] = limit_color(ans[x])
+    return ans
+        
 #vector functions
 def normalize(vector):
-    mag = (math.sqrt(vector[0]+vector[1]+vector[2]))**-1
-    for x in vector:
-        x *= mag
-
+    mag = math.sqrt(vector[0]**2+vector[1]**2+vector[2]**2)
+    for x in range(3):
+        vector[x] /= mag
+        
 def dot_product(a, b):
     return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]
 
