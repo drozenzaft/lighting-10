@@ -6,22 +6,20 @@ DIFFUSE = 1
 SPECULAR = 2
 LOCATION = 0
 COLOR = 1
-SPECULAR_EXP = 16
+SPECULAR_EXP = 4
 
 #lighting functions
 def get_lighting(normal, view, ambient, light, areflect, dreflect, sreflect ):
-    #ans = add_colors(calculate_ambient(ambient,areflect),calculate_diffuse(
-     #   light,dreflect,normal),calculate_specular(light,sreflect,view,normal))
-    ans = calculate_ambient(ambient,areflect)
+    ans = add_colors(calculate_ambient(ambient,areflect),calculate_diffuse(
+        light,dreflect,normal),calculate_specular(light,sreflect,view,normal))
     for x in range(3):
         ans[x] = limit_color(ans[x])
-    print ans
     return ans
 
 def calculate_ambient(alight, areflect):
     ans = [0,0,0]
     for x in range(3):
-        ans[x] = alight[x]*areflect[x]
+        ans[x] = int(alight[x]*areflect[x])
         ans[x] = limit_color(ans[x])
     return ans
 
@@ -33,7 +31,7 @@ def calculate_diffuse(light, dreflect, normal):
     normalize(l)
     normalize(n)
     for x in range(3):
-        ans[x] = p[x]*dreflect[x]*dot_product(l,n)
+        ans[x] = int(p[x]*dreflect[x]*dot_product(l,n))
         ans[x] = limit_color(ans[x])
     return ans
 
@@ -47,7 +45,7 @@ def calculate_specular(light, sreflect, view, normal):
     normalize(v)
     normalize(l)
     for x in range(3):
-        ans[x] = p[x]*sreflect[x]*((2*dot_product(n,l)*n[x]-l[x])-v[x])**SPECULAR_EXP
+        ans[x] = int(p[x]*sreflect[x]*((2*dot_product(n,l)*n[x]-l[x])-v[x])**SPECULAR_EXP)
         ans[x] = limit_color(ans[x])
     return ans
     
