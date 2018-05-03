@@ -6,7 +6,7 @@ DIFFUSE = 1
 SPECULAR = 2
 LOCATION = 0
 COLOR = 1
-SPECULAR_EXP = 4
+SPECULAR_EXP = 3
 
 #lighting functions
 def get_lighting(normal, view, ambient, light, areflect, dreflect, sreflect ):
@@ -25,8 +25,8 @@ def calculate_ambient(alight, areflect):
 
 def calculate_diffuse(light, dreflect, normal):
     ans = [0,0,0]
-    p = light[1]
-    l = light[0]
+    p = light[COLOR]
+    l = light[LOCATION]
     n = normal
     normalize(l)
     normalize(n)
@@ -36,18 +36,24 @@ def calculate_diffuse(light, dreflect, normal):
     return ans
 
 def calculate_specular(light, sreflect, view, normal):
-    ans = [0,0,0]
-    p = light[1]
-    l = light[0]
+    p = light[COLOR]
+    l = light[LOCATION]
     v = view
     n = normal
     normalize(n)
     normalize(v)
     normalize(l)
+    ans = [0,0,0]
+    finalans = [0,0,0]
     for x in range(3):
-        ans[x] = int(p[x]*sreflect[x]*((2*dot_product(n,l)*n[x]-l[x])-v[x])**SPECULAR_EXP)
-        ans[x] = limit_color(ans[x])
-    return ans
+        ans[x] = 2*dot_product(n,l)*n[x]
+        ans[x] -= l[x]
+        finalans[x] = p[x]*sreflect[x]
+    for x in range(3):
+        finalans[x] *= (dot_product(ans,v))**SPECULAR_EXP
+        finalans[x] = int(finalans[x])
+        finalans[x] = limit_color(finalans[x])
+    return finalans
     
 def limit_color(color):
     if color < 0:
